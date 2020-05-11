@@ -1,2 +1,0 @@
-
-WASI_API(proc_exit, i32)

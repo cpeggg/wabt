@@ -428,12 +428,14 @@ if (NOT EMSCRIPTEN)
       include_directories(third_party/uvwasi/include)
       add_definitions(-DWITH_WASI)
       set(INTERP_LIBS uvwasi_a)
+      set(EXTRA_INTERP_SRC src/interp/interp-wasi.cc)
     endif()
 
     # wasm-interp
+
     wabt_executable(
       NAME wasm-interp
-      SOURCES src/tools/wasm-interp.cc src/interp/interp-wasi.cc
+      SOURCES src/tools/wasm-interp.cc ${EXTRA_INTERP_SRC}
       LIBS ${INTERP_LIBS}
       WITH_LIBM
       INSTALL

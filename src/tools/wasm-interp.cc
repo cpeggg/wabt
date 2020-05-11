@@ -212,7 +212,7 @@ static Result InstantiateModule(RefVec& imports,
   RefPtr<Trap> trap;
   *out_instance = Instance::Instantiate(s_store, module.ref(), imports, &trap);
   if (!*out_instance) {
-    WriteTrap(stream, "error initializing module", trap);
+    WriteTrap(s_stdout_stream.get(), "error initializing module", trap);
     return Result::Error;
   }
   return Result::Ok;
