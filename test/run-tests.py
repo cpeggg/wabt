@@ -678,9 +678,12 @@ class Status(object):
         sys.stderr.write('\r%s\r' % (' ' * self.last_length))
 
 
-def FindTestFiles(ext, filter_pattern_re):
+def FindTestFiles(ext, filter_pattern_re, exclude_dirs):
     tests = []
     for root, dirs, files in os.walk(TEST_DIR):
+        if exclude_dirs:
+            # Filtering out dirs here causes os.walk not to descend into them
+            dirs = [d for d in dirs if d not in exclude_dirs]
         for f in files:
             path = os.path.join(root, f)
             if os.path.splitext(f)[1] == ext:
@@ -913,12 +916,17 @@ def main(args):
             parser.error('--stop-interactive only works with -j1')
 
     if options.patterns:
+        exclude_dirs = []
         pattern_re = '|'.join(
             fnmatch.translate('*%s*' % p) for p in options.patterns)
     else:
         pattern_re = '.*'
+        # By default, exclude wasi tests because WASI support is not include
+        # by int the build by default.
+        # TODO(sbc): Find some way to detect the WASI support.
+        exclude_dirs = ['wasi']
 
-    test_names = FindTestFiles('.txt', pattern_re)
+    test_names = FindTestFiles('.txt', pattern_re, exclude_dirs)
 
     if options.list:
         for test_name in test_names:
